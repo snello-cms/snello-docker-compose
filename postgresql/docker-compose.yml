@@ -1,0 +1,53 @@
+version: '2'
+
+services:
+  postgresql:
+    image: postgres:11
+    environment:
+      POSTGRES_PASSWORD: snello
+      POSTGRES_USER: snello
+      POSTGRES_DB: snello
+    ports:
+      - '5432:5432'
+  pgadmin4:
+    image: dpage/pgadmin4
+    ports:
+      - '5050:5050'
+      - '85:80'
+    links:
+      - postgresql:postgresql
+    depends_on:
+      - postgresql
+    environment:
+      PGADMIN_DEFAULT_EMAIL: snello@snellocms.io
+      PGADMIN_DEFAULT_PASSWORD: snello
+  minio:
+    image: minio/minio
+    ports:
+      - "9001:9000"
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+    command: server /data
+  snello-api:
+    restart: always
+    image: snellocms/snello-api:latest
+    environment:
+      JDBC_HOST: postgresql
+      JDBC_TYPE: postgresql
+      JDBC_PORT: 5432
+      JDBC_DB: snello
+      JDBC_USERNAME: snello
+      JDBC_PASSWORD: snello
+      JDBC_DRIVER: org.postgresql.Driver
+      MICRONAUT_DB_TYPE: postgresql
+      MICRONAUT_STORAGE_TYPE: s3
+      MICRONAUT_S3_ENDPOINT: minio:9001
+      MICRONAUT_S3_ACCESSKEY: minio
+      MICRONAUT_S3_SECRETKEY: minio123
+      MICRONAUT_S3_BUCKETNAME: snello
+      MICRONAUT_S3_FOLDER: snello
+      MICRONAUT_S3_REGION: us-east-1
+      WEB_PATH: "/home/snello/files/"
+      JAVA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787"
+      TZ: "Europe/Rome"
