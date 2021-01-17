@@ -38,11 +38,11 @@ services:
       JDBC_DRIVER: com.mysql.jdbc.Driver
       MICRONAUT_DB_TYPE: mysql
       MICRONAUT_STORAGE_TYPE: s3
-      MICRONAUT_S3_ENDPOINT: s3.n-ess.it
-      MICRONAUT_S3_ACCESSKEY: minio@ness.it
-      MICRONAUT_S3_SECRETKEY: n3ssM1n104dm1n
-      MICRONAUT_S3_BUCKETNAME: ness-it-site
-      MICRONAUT_S3_FOLDER: ness-it-site
+      MICRONAUT_S3_ENDPOINT: http://localhost:9091
+      MICRONAUT_S3_ACCESSKEY: minio
+      MICRONAUT_S3_SECRETKEY: mino123
+      MICRONAUT_S3_BUCKETNAME: snello
+      MICRONAUT_S3_FOLDER: snello
       MICRONAUT_S3_REGION: us-east-1
       WEB_PATH: "/home/snello/files/"
       JAVA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787"
