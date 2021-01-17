@@ -1,0 +1,60 @@
+version: '3.5'
+services:
+  mysql:
+    image: mysql
+    restart: always
+    expose:
+      - "3306"
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: snello
+      MYSQL_DATABASE: snello
+      MYSQL_USER: snello
+      MYSQL_PASSWORD: snello
+    command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --max-connections=1000, --wait-timeout=300, --interactive-timeout=300]
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    logging:
+      driver: none
+    depends_on:
+      - mysql
+    links:
+      - mysql:db
+    expose:
+      - "80"
+    ports:
+      - "9999:80"
+  snello-api:
+    restart: always
+    image: snellocms/snello-api:latest
+    environment:
+      JDBC_HOST: mysql
+      JDBC_TYPE: mysql
+      JDBC_PORT: 3306
+      JDBC_DB: snello
+      JDBC_USERNAME: snello
+      JDBC_PASSWORD: snello
+      JDBC_DRIVER: com.mysql.jdbc.Driver
+      MICRONAUT_DB_TYPE: mysql
+      MICRONAUT_STORAGE_TYPE: s3
+      MICRONAUT_S3_ENDPOINT: s3.n-ess.it
+      MICRONAUT_S3_ACCESSKEY: minio@ness.it
+      MICRONAUT_S3_SECRETKEY: n3ssM1n104dm1n
+      MICRONAUT_S3_BUCKETNAME: ness-it-site
+      MICRONAUT_S3_FOLDER: ness-it-site
+      MICRONAUT_S3_REGION: us-east-1
+      WEB_PATH: "/home/snello/files/"
+      JAVA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8787"
+      TZ: "Europe/Rome"
+    ports:
+      - "8080:8080"
+  snello-admin:
+    restart: always
+    image: snellocms/snello-admin:latest
+    volumes:
+      - ./config-snello-admin.json:/usr/share/nginx/html/snello-admin/assets/config.json
+    depends_on:
+      - snello-api
+    ports:
+      - "80:80"
